@@ -61,6 +61,8 @@ function createApp(db) {
     const code = err.status >= 400 && err.status < 500 ? err.status : 500;
     if (code === 500) console.error(err);
     const messages = { 400: 'Некорректный запрос', 413: 'Слишком большой запрос' };
+    // ошибка могла случиться раньше, чем подставился пользователь: даём шаблону значения по умолчанию
+    res.locals = { user: null, path: req.path, flash: null, csrfToken: '', ...res.locals };
     res.status(code).render('error', { code, message: messages[code] || (code === 500 ? 'Ошибка сервера' : 'Запрос не выполнен') });
   });
   return app;

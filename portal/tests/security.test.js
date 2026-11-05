@@ -67,4 +67,5 @@ test('логин не различает регистр: Ivan_K это тот ж
 test('слишком большое тело запроса даёт 413, а не 500', async () => {
   const res = await fetch(ctx.base + '/login', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'login=' + 'a'.repeat(200000) });
   assert.strictEqual(res.status, 413);
+  assert.match(await res.text(), /Слишком большой запрос/); // страница ошибки в оформлении сайта, а не стандартная
 });
