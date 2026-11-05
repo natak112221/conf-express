@@ -11,11 +11,11 @@ if (db.prepare('SELECT COUNT(*) FROM users').pluck().get() > 0) {
 }
 
 const ROUNDS = Number(process.env.BCRYPT_ROUNDS) || 10;
-const addUser0 = db.prepare('INSERT INTO users (login, password, email, phone, role) VALUES (?, ?, ?, ?, ?)');
-const addUser = { run: (l, p, e, ph, r) => addUser0.run(l, bcrypt.hashSync(p, ROUNDS), e, ph, r) };
-addUser.run('admin', 'Admin2026', 'admin@conf-express.test', '+79000000001', 'admin');
-addUser.run('ivan_k', 'Password123', 'ivan.k@mail.test', '+79161234567', 'participant');
-addUser.run('maria_s', 'Password123', 'maria.s@mail.test', '+79267654321', 'participant');
+const insertUser = db.prepare('INSERT INTO users (login, password, email, phone, role) VALUES (?, ?, ?, ?, ?)');
+const addUser = (login, password, email, phone, role) => insertUser.run(login, bcrypt.hashSync(password, ROUNDS), email, phone, role);
+addUser('admin', 'Admin2026', 'admin@conf-express.test', '+79000000001', 'admin');
+addUser('ivan_k', 'Password123', 'ivan.k@mail.test', '+79161234567', 'participant');
+addUser('maria_s', 'Password123', 'maria.s@mail.test', '+79267654321', 'participant');
 
 const addEvent = db.prepare('INSERT INTO events (title, starts_at, place, description, photo) VALUES (?, ?, ?, ?, ?)');
 const events = [
@@ -38,8 +38,7 @@ const events = [
 ];
 for (const e of events) addEvent.run(...e);
 
-const addApp0 = db.prepare('INSERT INTO applications (user_id, event_id, room, payment, status_id) VALUES (?, ?, ?, ?, (SELECT id FROM statuses WHERE name = ?))');
-const addApp = { run: (...a) => addApp0.run(...a) };
+const addApp = db.prepare('INSERT INTO applications (user_id, event_id, room, payment, status_id) VALUES (?, ?, ?, ?, (SELECT id FROM statuses WHERE name = ?))');
 addApp.run(2, 1, 'Большой зал', 'Картой онлайн', 'завершено');
 addApp.run(2, 4, 'Большой зал', 'Картой онлайн', 'новая');
 addApp.run(3, 2, 'Малый зал', 'Наличными на входе', 'завершено');

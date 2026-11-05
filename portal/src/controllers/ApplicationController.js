@@ -27,13 +27,17 @@ class ApplicationController {
     res.redirect('/applications');
   };
 
+  // заявки пользователя с признаком «можно оставить отзыв»
+  itemsFor(userId) {
+    return this.applications.byUser(userId).map((a) => ({ ...a, can_review: canReview(a) }));
+  }
+
   mine = (req, res) => {
-    const items = this.applications.byUser(req.user.id).map((a) => ({ ...a, can_review: canReview(a) }));
-    res.render('my-applications', { items, errors: {}, values: {}, openId: null });
+    res.render('my-applications', { items: this.itemsFor(req.user.id), errors: {}, values: {}, openId: null });
   };
 
   review = (req, res) => {
-    const app = this.applications.withEvent(req.params.id);
+    const app = this.applications.find(req.params.id);
     // чужие заявки не показываем: для пользователя их как будто нет
     if (!app || app.user_id !== req.user.id) return res.status(404).render('error', { code: 404, message: 'Заявка не найдена' });
     if (!canReview(app)) {
@@ -41,8 +45,7 @@ class ApplicationController {
     }
     const { errors, values } = validateReview(req.body);
     if (Object.keys(errors).length) {
-      const items = this.applications.byUser(req.user.id).map((a) => ({ ...a, can_review: canReview(a) }));
-      return res.status(422).render('my-applications', { items, errors, values, openId: app.id });
+      return res.status(422).render('my-applications', { items: this.itemsFor(req.user.id), errors, values, openId: app.id });
     }
     this.applications.addReview(app.id, values.text, values.rating);
     req.session.flash = 'Спасибо за отзыв';
