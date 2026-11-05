@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const helmet = require('helmet');
+const compression = require('compression');
 
 const { migrate } = require('./db');
 const format = require('./lib/format');
@@ -29,13 +30,17 @@ function createApp(db) {
   app.locals.statusClass = STATUS_CLASS;
   app.locals.isPast = isPast;
 
-  app.use(express.static(path.join(__dirname, '..', 'public')));
+  app.use(compression()); // сжатие ответов gzip
+  // картинки и шрифты не меняются: браузер хранит их неделю
+  app.use(express.static(path.join(__dirname, '..', 'public'), { maxAge: '7d' }));
   app.use(express.urlencoded({ extended: false }));
+  const store = new SqliteStore(db);
+  app.locals.sessionStore = store;
   app.use(
     session({
       name: 'sid',
       secret: process.env.SESSION_SECRET || 'dev-secret-change-me',
-      store: new SqliteStore(db),
+      store,
       resave: false,
       saveUninitialized: false,
       cookie: {
@@ -51,7 +56,7 @@ function createApp(db) {
   app.use(buildRouter(models));
 
   app.use((req, res) => res.status(404).render('error', { code: 404, message: 'Страница не найдена' }));
-  app.use((err, req, res, next) => {
+  app.use((err, req, res, _next) => {
     console.error(err);
     res.status(500).render('error', { code: 500, message: 'Ошибка сервера' });
   });
