@@ -52,3 +52,19 @@ test('после 5 неверных паролей вход закрыт, даж
   const res = await c.submit('/login', '/login', { login: 'admin', password: 'Admin2026' });
   assert.strictEqual(res.status, 429);
 });
+
+test('страницы вошедшего пользователя не кешируются', async () => {
+  const c = new Client(ctx.base);
+  await c.submit('/login', '/login', { login: 'ivan_k', password: 'Password123' });
+  assert.match((await c.get('/cabinet')).headers.get('cache-control'), /no-store/);
+});
+
+test('логин не различает регистр: Ivan_K это тот же логин', async () => {
+  const res = await new Client(ctx.base).submit('/register', '/register', { login: 'Ivan_K', password: 'Password123', email: 'x@t.test', phone: '+79001234567' });
+  assert.strictEqual(res.status, 422);
+});
+
+test('слишком большое тело запроса даёт 413, а не 500', async () => {
+  const res = await fetch(ctx.base + '/login', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'login=' + 'a'.repeat(200000) });
+  assert.strictEqual(res.status, 413);
+});

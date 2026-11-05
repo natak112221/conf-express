@@ -4,6 +4,8 @@ function loadUser(users) {
     const id = req.session.userId;
     req.user = id ? users.findById(id) : null;
     res.locals.user = req.user;
+    // страницы вошедшего пользователя браузер не сохраняет (кнопка «Назад» после выхода не покажет их)
+    if (req.user) res.set('Cache-Control', 'no-store');
     res.locals.path = req.path;
     res.locals.flash = req.session.flash || null;
     delete req.session.flash;

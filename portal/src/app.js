@@ -57,8 +57,11 @@ function createApp(db) {
 
   app.use((req, res) => res.status(404).render('error', { code: 404, message: 'Страница не найдена' }));
   app.use((err, req, res, _next) => {
-    console.error(err);
-    res.status(500).render('error', { code: 500, message: 'Ошибка сервера' });
+    // ошибки клиента (слишком большое тело, неверный запрос) показываем со своим кодом, а не как 500
+    const code = err.status >= 400 && err.status < 500 ? err.status : 500;
+    if (code === 500) console.error(err);
+    const messages = { 400: 'Некорректный запрос', 413: 'Слишком большой запрос' };
+    res.status(code).render('error', { code, message: messages[code] || (code === 500 ? 'Ошибка сервера' : 'Запрос не выполнен') });
   });
   return app;
 }
