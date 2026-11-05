@@ -11,6 +11,7 @@
     <td><%= a.payment %></td>
     <td>
       <form method="post" action="/admin/applications/<%= a.id %>/status">
+        <%- include('partials/csrf') %>
         <select name="status">
           <% statuses.forEach(function (s) { %><option <%= s === a.status ? 'selected' : '' %>><%= s %></option><% }) %>
         </select>

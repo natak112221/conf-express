@@ -5,9 +5,10 @@
   <ul class="errors"><% Object.values(errors).forEach(function (m) { %><li><%= m %></li><% }) %></ul>
 <% } %>
 <form method="post" action="/applications">
+  <%- include('partials/csrf') %>
   <input type="hidden" name="event_id" value="<%= event.id %>">
-  <p><label>Помещение <input name="room" value="<%= values.room || '' %>"></label></p>
-  <p><label>Способ оплаты <input name="payment" value="<%= values.payment || '' %>"></label></p>
+  <p><label>Помещение <input name="room" required value="<%= values.room || '' %>"></label></p>
+  <p><label>Способ оплаты <input name="payment" required value="<%= values.payment || '' %>"></label></p>
   <p><button>Отправить заявку</button></p>
 </form>
 <%- include('partials/foot') %>

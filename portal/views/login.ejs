@@ -2,8 +2,9 @@
 <h1>Вход</h1>
 <% if (error) { %><p class="errors"><%= error %></p><% } %>
 <form method="post" action="/login">
-  <p><label>Логин <input name="login" value="<%= login %>"></label></p>
-  <p><label>Пароль <input type="password" name="password"></label></p>
+  <%- include('partials/csrf') %>
+  <p><label>Логин <input name="login" required value="<%= login %>"></label></p>
+  <p><label>Пароль <input type="password" name="password" required></label></p>
   <p><button>Войти</button></p>
 </form>
 <%- include('partials/foot') %>

@@ -1,4 +1,5 @@
 // Учебные данные: администратор, два участника, мероприятия и несколько заявок
+const bcrypt = require('bcryptjs');
 const { openDb, migrate } = require('../src/db');
 
 const db = openDb();
@@ -9,7 +10,9 @@ if (db.prepare('SELECT COUNT(*) FROM users').pluck().get() > 0) {
   process.exit(0);
 }
 
-const addUser = db.prepare('INSERT INTO users (login, password, email, phone, role) VALUES (?, ?, ?, ?, ?)');
+const ROUNDS = Number(process.env.BCRYPT_ROUNDS) || 10;
+const addUser0 = db.prepare('INSERT INTO users (login, password, email, phone, role) VALUES (?, ?, ?, ?, ?)');
+const addUser = { run: (l, p, e, ph, r) => addUser0.run(l, bcrypt.hashSync(p, ROUNDS), e, ph, r) };
 addUser.run('admin', 'Admin2026', 'admin@conf-express.test', '+79000000001', 'admin');
 addUser.run('ivan_k', 'Password123', 'ivan.k@mail.test', '+79161234567', 'participant');
 addUser.run('maria_s', 'Password123', 'maria.s@mail.test', '+79267654321', 'participant');
