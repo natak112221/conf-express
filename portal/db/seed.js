@@ -38,13 +38,14 @@ const events = [
 ];
 for (const e of events) addEvent.run(...e);
 
-const addApp = db.prepare('INSERT INTO applications (user_id, event_id, room, payment, status) VALUES (?, ?, ?, ?, ?)');
+const addApp0 = db.prepare('INSERT INTO applications (user_id, event_id, room, payment, status_id) VALUES (?, ?, ?, ?, (SELECT id FROM statuses WHERE name = ?))');
+const addApp = { run: (...a) => addApp0.run(...a) };
 addApp.run(2, 1, 'Большой зал', 'Картой онлайн', 'завершено');
 addApp.run(2, 4, 'Большой зал', 'Картой онлайн', 'новая');
 addApp.run(3, 2, 'Малый зал', 'Наличными на входе', 'завершено');
 addApp.run(3, 5, 'Малый зал', 'Счёт для организации', 'назначено');
 
-db.prepare("UPDATE applications SET review_text = ?, review_rating = 4, reviewed_at = '2026-10-11 09:00' WHERE id = 3").run(
+db.prepare("INSERT INTO reviews (application_id, text, rating, created_at) VALUES (3, ?, 4, '2026-10-11 09:00')").run(
   'Хорошие доклады, понравился разбор CSV на живом примере. Хотелось бы больше времени на практику.'
 );
 

@@ -12,11 +12,11 @@ function openDb(file = process.env.DB_FILE || DEFAULT_FILE) {
   return db;
 }
 
-// Применяет новые миграции, возвращает список применённых
-function migrate(db) {
+// Применяет новые миграции, возвращает список применённых (upTo: остановиться на файле с таким именем, нужно для тестов)
+function migrate(db, upTo = 'zzz') {
   db.exec('CREATE TABLE IF NOT EXISTS schema_migrations (name TEXT PRIMARY KEY, applied_at TEXT NOT NULL)');
   const applied = new Set(db.prepare('SELECT name FROM schema_migrations').pluck().all());
-  const files = fs.readdirSync(MIGRATIONS).filter((f) => /\.(sql|js)$/.test(f)).sort();
+  const files = fs.readdirSync(MIGRATIONS).filter((f) => /\.(sql|js)$/.test(f) && f <= upTo).sort();
   const done = [];
   for (const f of files) {
     if (applied.has(f)) continue;

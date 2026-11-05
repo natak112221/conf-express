@@ -53,7 +53,7 @@ test('отзыв: завершённая заявка на прошедшее м
   const c = await loginAs('maria_s');
   await apply(c, past);
   const id = ctx.db.prepare("SELECT id FROM applications WHERE event_id = ? AND user_id = 3").pluck().get(past);
-  ctx.db.prepare("UPDATE applications SET status = 'завершено' WHERE id = ?").run(id);
+  ctx.db.prepare("UPDATE applications SET status_id = (SELECT id FROM statuses WHERE name = 'завершено') WHERE id = ?").run(id);
   const bad = await c.submit('/applications', `/applications/${id}/review`, { rating: '7', text: 'коротко' });
   assert.strictEqual(bad.status, 422);
   const ok = await c.submit('/applications', `/applications/${id}/review`, { rating: '5', text: 'Хорошая встреча' });
