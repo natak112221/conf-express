@@ -31,3 +31,13 @@ test('почта без домена и телефон с буквами не п
   assert.ok(validateRegistration({ ...good, email: 'natali.mail' }, free).errors.email);
   assert.ok(validateRegistration({ ...good, phone: '8900abc2233' }, free).errors.phone);
 });
+
+test('пароль из одних пробелов и слишком длинный пароль не проходят', () => {
+  assert.ok(validateRegistration({ ...good, password: ' '.repeat(8) }, free).errors.password);
+  assert.ok(validateRegistration({ ...good, password: 'A'.repeat(73) }, free).errors.password);
+  assert.strictEqual(validateRegistration({ ...good, password: 'A'.repeat(72) }, free).errors.password, undefined);
+});
+
+test('почта длиннее 254 символов не проходит', () => {
+  assert.ok(validateRegistration({ ...good, email: 'a'.repeat(250) + '@t.ru' }, free).errors.email);
+});

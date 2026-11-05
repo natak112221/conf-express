@@ -8,7 +8,7 @@ class UserModel {
   }
 
   findByLogin(login) {
-    return this.db.prepare('SELECT * FROM users WHERE login = ?').get(login);
+    return this.db.prepare('SELECT * FROM users WHERE login = ? COLLATE NOCASE').get(login);
   }
 
   checkPassword(user, password) {

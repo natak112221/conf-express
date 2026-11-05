@@ -17,8 +17,14 @@ function validateRegistration(data, users) {
   if (!/^[A-Za-z0-9_]{3,20}$/.test(login)) errors.login = 'Логин: 3-20 символов, латиница, цифры и _';
   else if (users.findByLogin(login)) errors.login = 'Такой логин уже занят';
 
-  if (String(data.password || '').length < 8) errors.password = 'Пароль должен быть не короче 8 символов';
-  if (!EMAIL_RE.test(String(data.email || '').trim())) errors.email = 'Введите почту в формате name@site.ru';
+  const password = String(data.password || '');
+  if (password.length < 8) errors.password = 'Пароль должен быть не короче 8 символов';
+  else if (!password.trim()) errors.password = 'Пароль не может состоять из одних пробелов';
+  // bcrypt учитывает только первые 72 байта, остальное отбросил бы молча
+  else if (Buffer.byteLength(password) > 72) errors.password = 'Пароль слишком длинный: не больше 72 байт (около 36 русских букв)';
+  const email = String(data.email || '').trim();
+  if (!EMAIL_RE.test(email)) errors.email = 'Введите почту в формате name@site.ru';
+  else if (email.length > 254) errors.email = 'Почта слишком длинная: не больше 254 символов';
   const phone = normalizePhone(data.phone);
   if (!phone) errors.phone = 'Телефон в формате +7 900 123-45-67 или 8 900 123-45-67';
   return { errors, values: { login, email: String(data.email || '').trim(), phone: phone || String(data.phone || '').trim() } };
