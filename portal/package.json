@@ -1,0 +1,25 @@
+{
+  "name": "conf-express",
+  "version": "1.0.0",
+  "description": "Портал «Конференции.РФ»: учебный проект (Express, EJS, SQLite)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "migrate": "node db/migrate.js",
+    "seed": "node db/seed.js",
+    "setup": "node db/migrate.js && node db/seed.js",
+    "test": "node --test tests/"
+  },
+  "license": "ISC",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.0.3",
+    "ejs": "^7.0.2",
+    "express": "^5.3.0",
+    "express-session": "^1.19.0",
+    "helmet": "^8.3.0"
+  }
+}

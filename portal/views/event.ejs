@@ -1,0 +1,11 @@
+<%- include('partials/head', { title: event.title }) %>
+<h1><%= event.title %></h1>
+<p><b>Когда:</b> <%= fmt.fmtDateTime(event.starts_at) %></p>
+<p><b>Где:</b> <%= event.place %></p>
+<p><%= event.description %></p>
+<% if (mine) { %>
+  <p>Вы подали заявку, статус: <%= mine.status %></p>
+<% } else { %>
+  <p><a href="/applications/new?event=<%= event.id %>">Подать заявку</a></p>
+<% } %>
+<%- include('partials/foot') %>

@@ -1,0 +1,13 @@
+<%- include('partials/head', { title: 'Заявка' }) %>
+<h1>Заявка на мероприятие</h1>
+<p><b><%= event.title %></b>, <%= fmt.fmtDateTime(event.starts_at) %></p>
+<% if (Object.keys(errors).length) { %>
+  <ul class="errors"><% Object.values(errors).forEach(function (m) { %><li><%= m %></li><% }) %></ul>
+<% } %>
+<form method="post" action="/applications">
+  <input type="hidden" name="event_id" value="<%= event.id %>">
+  <p><label>Помещение <input name="room" value="<%= values.room || '' %>"></label></p>
+  <p><label>Способ оплаты <input name="payment" value="<%= values.payment || '' %>"></label></p>
+  <p><button>Отправить заявку</button></p>
+</form>
+<%- include('partials/foot') %>

@@ -1,0 +1,13 @@
+<%- include('partials/head', { title: 'Регистрация' }) %>
+<h1>Регистрация</h1>
+<% if (Object.keys(errors).length) { %>
+  <ul class="errors"><% Object.values(errors).forEach(function (m) { %><li><%= m %></li><% }) %></ul>
+<% } %>
+<form method="post" action="/register">
+  <p><label>Логин <input name="login" value="<%= values.login || '' %>"></label></p>
+  <p><label>Пароль <input type="password" name="password"></label></p>
+  <p><label>Почта <input name="email" value="<%= values.email || '' %>"></label></p>
+  <p><label>Телефон <input name="phone" value="<%= values.phone || '' %>"></label></p>
+  <p><button>Зарегистрироваться</button></p>
+</form>
+<%- include('partials/foot') %>

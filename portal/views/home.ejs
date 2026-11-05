@@ -1,0 +1,9 @@
+<%- include('partials/head', { title: 'Мероприятия' }) %>
+<h1>Мероприятия</h1>
+<% events.forEach(function (e) { %>
+  <div class="item">
+    <h3><a href="/events/<%= e.id %>"><%= e.title %></a></h3>
+    <p><%= fmt.fmtDateTime(e.starts_at) %>, <%= e.place %></p>
+  </div>
+<% }) %>
+<%- include('partials/foot') %>
