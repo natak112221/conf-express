@@ -36,7 +36,7 @@
     <%- include('partials/csrf') %>
     <input type="hidden" name="back" value="<%= '/admin?' + new URLSearchParams({ ...query, page }).toString() %>">
     <select name="status" aria-label="Статус заявки <%= a.id %>">
-      <% statuses.forEach(function (s) { %><option <%= s === a.status ? 'selected' : '' %>><%= s %></option><% }) %>
+      <% a.allowed.forEach(function (s) { %><option <%= s === a.status ? 'selected' : '' %>><%= s %></option><% }) %>
     </select>
     <button class="btn btn--small">Сохранить</button>
   </form>

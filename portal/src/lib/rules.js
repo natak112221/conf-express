@@ -10,4 +10,16 @@ function canReview(app) {
   return app.status === 'завершено' && app.starts_at <= nowString() && !app.review_text;
 }
 
-module.exports = { isPast, canReview };
+const ORDER = ['новая', 'назначено', 'завершено'];
+
+// Статусы, которые можно выбрать для заявки: текущий и следующий по порядку.
+// Завершить заявку можно только когда мероприятие прошло.
+function allowedStatuses(app) {
+  const i = ORDER.indexOf(app.status);
+  const next = ORDER[i + 1];
+  const list = [app.status];
+  if (next && (next !== 'завершено' || app.starts_at <= nowString())) list.push(next);
+  return list;
+}
+
+module.exports = { isPast, canReview, allowedStatuses };

@@ -51,8 +51,9 @@ test('отзыв: пока заявка не завершена, отправи�
 
 test('отзыв: завершённая заявка на прошедшее мероприятие, один раз', async () => {
   const c = await loginAs('maria_s');
-  await apply(c, past);
-  const id = ctx.db.prepare("SELECT id FROM applications WHERE event_id = ? AND user_id = 3").pluck().get(past);
+  // на прошедшее мероприятие заявку через сайт уже не подать, поэтому кладём её в базу напрямую
+  ctx.db.prepare("INSERT INTO applications (user_id, event_id, room, payment) VALUES (3, ?, 'Малый зал', 'Картой онлайн')").run(past);
+  const id = ctx.db.prepare('SELECT id FROM applications WHERE event_id = ? AND user_id = 3').pluck().get(past);
   ctx.db.prepare("UPDATE applications SET status_id = (SELECT id FROM statuses WHERE name = 'завершено') WHERE id = ?").run(id);
   const bad = await c.submit('/applications', `/applications/${id}/review`, { rating: '7', text: 'коротко' });
   assert.strictEqual(bad.status, 422);
@@ -78,4 +79,20 @@ test('панель администратора: фильтр по статус�
   assert.strictEqual(count(all), 2);
   assert.strictEqual(count(done), 1);
   assert.strictEqual(count(byEvent), 1);
+});
+
+test('заявку на прошедшее мероприятие подать нельзя', async () => {
+  const c = await loginAs('ivan_k');
+  assert.strictEqual((await apply(c, past)).status, 422);
+  assert.strictEqual((await c.get(`/applications/new?event=${past}`)).status, 422);
+});
+
+test('статус меняется по порядку, завершить можно только после мероприятия', async () => {
+  const admin = await loginAs('admin', 'Admin2026');
+  const id = ctx.db.prepare('SELECT id FROM applications WHERE event_id = ?').pluck().get(future);
+  const set = (status) => admin.submit('/admin', `/admin/applications/${id}/status`, { status, back: '/admin' });
+  assert.strictEqual((await set('завершено')).status, 422); // перескок через «назначено» и мероприятие впереди
+  assert.strictEqual((await set('назначено')).status, 302);
+  assert.strictEqual((await set('завершено')).status, 422); // мероприятие ещё не прошло
+  assert.strictEqual((await set('новая')).status, 422); // назад нельзя
 });

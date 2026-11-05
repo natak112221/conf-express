@@ -1,5 +1,5 @@
 const { validateApplication, validateReview } = require('../lib/validate');
-const { canReview } = require('../lib/rules');
+const { canReview, isPast } = require('../lib/rules');
 const { ROOMS, PAYMENTS } = require('../lib/constants');
 
 class ApplicationController {
@@ -8,15 +8,22 @@ class ApplicationController {
     this.applications = applications;
   }
 
+  // мероприятие уже прошло: заявки не принимаются
+  closed(res) {
+    return res.status(422).render('error', { code: 422, message: 'Мероприятие уже прошло, заявки не принимаются' });
+  }
+
   form = (req, res) => {
     const event = this.events.find(req.query.event);
     if (!event) return res.status(404).render('error', { code: 404, message: 'Мероприятие не найдено' });
+    if (isPast(event)) return this.closed(res);
     res.render('application-form', { event, errors: {}, values: {}, rooms: ROOMS, payments: PAYMENTS });
   };
 
   create = (req, res) => {
     const event = this.events.find(req.body.event_id);
     if (!event) return res.status(404).render('error', { code: 404, message: 'Мероприятие не найдено' });
+    if (isPast(event)) return this.closed(res);
     const errors = validateApplication(req.body);
     if (this.applications.findByUserAndEvent(req.user.id, event.id)) errors.event = 'Вы уже подали заявку на это мероприятие';
     if (Object.keys(errors).length) {
