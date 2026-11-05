@@ -1,0 +1,17 @@
+Портал запущен: http://localhost:8102
+ReferenceError: portal\views\error.ejs:1
+ >> 1| <%- include('partials/head', { title: 'Ошибка ' + code }) %>
+    2| <h1><%= code %></h1>
+    3| <p><%= message %></p>
+    4| <p><a href="/">На главную</a></p>
+
+portal\views\partials\head.ejs:12
+    10|   <a href="/">Конференции.РФ</a> |
+    11|   <a href="/">Мероприятия</a>
+ >> 12|   <% if (user) { %>
+    13|     | <a href="/applications">Мои заявки</a>
+    14|     <% if (user.role === 'admin') { %>| <a href="/admin">Панель администратора</a><% } %>
+    15|     | <%= user.login %>
+
+user is not defined
+    at eval (eval at compile (portal\node_modules\ejs\lib\cjs\ejs.js:613:18), <anonymous>:15:8)
