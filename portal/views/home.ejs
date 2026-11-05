@@ -1,9 +1,31 @@
-<%- include('partials/head', { title: 'Мероприятия' }) %>
-<h1>Мероприятия</h1>
-<% events.forEach(function (e) { %>
-  <div class="item">
-    <h3><a href="/events/<%= e.id %>"><%= e.title %></a></h3>
-    <p><%= fmt.fmtDateTime(e.starts_at) %>, <%= e.place %></p>
+<%- include('partials/head', { title: 'Афиша мероприятий' }) %>
+<section class="hero">
+  <div>
+    <h1>Встречи для разработчиков</h1>
+    <p class="lead">Небольшие конференции в Москве: доклады, практикумы и разговоры после. Выберите мероприятие и подайте заявку за минуту.</p>
+    <div class="hero-actions">
+      <a class="btn" href="#afisha">Смотреть афишу</a>
+      <% if (!user) { %><a class="btn btn--ghost" href="/register">Зарегистрироваться</a><% } else { %><a class="btn btn--ghost" href="/applications">Мои заявки</a><% } %>
+    </div>
   </div>
-<% }) %>
+  <div class="hero-photo">
+    <img src="/img/hero-m.jpg" srcset="/img/hero-m.jpg 780w, /img/hero.jpg 1600w" sizes="(max-width: 900px) 100vw, 520px" alt="Зал на конференции: докладчик на сцене и слушатели" width="1600" height="640">
+  </div>
+</section>
+
+<section id="afisha">
+  <div class="section-title"><h2>Ближайшие мероприятия</h2><span class="muted"><%= upcoming.length %></span></div>
+  <div class="grid">
+    <% upcoming.forEach(function (e) { %><%- include('partials/event-card', { e }) %><% }) %>
+  </div>
+</section>
+
+<% if (past.length) { %>
+<section>
+  <div class="section-title"><h2>Прошедшие</h2><span class="muted"><%= past.length %></span></div>
+  <div class="grid">
+    <% past.forEach(function (e) { %><%- include('partials/event-card', { e }) %><% }) %>
+  </div>
+</section>
+<% } %>
 <%- include('partials/foot') %>

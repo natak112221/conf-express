@@ -1,10 +1,19 @@
 <%- include('partials/head', { title: 'Вход' }) %>
-<h1>Вход</h1>
-<% if (error) { %><p class="error"><%= error %></p><% } %>
-<form method="post" action="/login">
-  <%- include('partials/csrf') %>
-  <div class="field"><label for="login">Логин</label><input id="login" name="login" required value="<%= login %>"></div>
-  <div class="field"><label for="password">Пароль</label><input id="password" type="password" name="password" required></div>
-  <p><button>Войти</button></p>
-</form>
+<div class="form-card">
+  <h1>Вход</h1>
+  <% if (error) { %><p class="alert" role="alert"><%= error %></p><% } %>
+  <form method="post" action="/login">
+    <%- include('partials/csrf') %>
+    <div class="field"><label for="login">Логин</label><input id="login" name="login" autocomplete="username" required value="<%= login %>"></div>
+    <div class="field">
+      <label for="password">Пароль</label>
+      <div class="password-wrap">
+        <input id="password" type="password" name="password" autocomplete="current-password" required>
+        <button type="button" data-toggle-password="password">Показать</button>
+      </div>
+    </div>
+    <button class="btn btn--block">Войти</button>
+  </form>
+  <p class="form-foot">Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+</div>
 <%- include('partials/foot') %>

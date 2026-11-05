@@ -1,37 +1,46 @@
 <%- include('partials/head', { title: 'Панель администратора' }) %>
 <h1>Панель администратора</h1>
 <form method="get" action="/admin" class="filter">
-  <label>Статус
-    <select name="status">
+  <div class="field">
+    <label for="f-status">Статус</label>
+    <select id="f-status" name="status">
       <option value="">Все</option>
       <% statuses.forEach(function (s) { %><option <%= filter.status === s ? 'selected' : '' %>><%= s %></option><% }) %>
     </select>
-  </label>
-  <label>Мероприятие
-    <select name="event">
+  </div>
+  <div class="field">
+    <label for="f-event">Мероприятие</label>
+    <select id="f-event" name="event">
       <option value="">Все</option>
       <% events.forEach(function (e) { %><option value="<%= e.id %>" <%= filter.eventId === e.id ? 'selected' : '' %>><%= e.title %></option><% }) %>
     </select>
-  </label>
-  <button>Показать</button> <a href="/admin">Сбросить</a>
+  </div>
+  <button class="btn">Показать</button>
+  <a class="btn btn--ghost" href="/admin">Сбросить</a>
 </form>
 <p>Найдено заявок: <b><%= items.length %></b></p>
+<div class="list admin-grid">
 <% items.forEach(function (a) { %>
-<div class="card">
-  <p class="status"><%= a.status %></p>
-  <h3>Заявка №<%= a.id %>: <%= a.title %></h3>
-  <p><%= fmt.fmtDateTime(a.starts_at) %></p>
-  <p>Участник: <%= a.login %>, <%= a.email %>, <%= a.phone %></p>
-  <p>Помещение: <%= a.room %>. Оплата: <%= a.payment %>.</p>
-  <% if (a.review_text) { %><p>Отзыв (<%= a.review_rating %> из 5): <%= a.review_text %></p><% } %>
-  <form method="post" action="/admin/applications/<%= a.id %>/status">
+<article class="app-card">
+  <span class="status status--<%= statusClass[a.status] %>"><%= a.status %></span>
+  <h3>№<%= a.id %>. <%= a.title %></h3>
+  <dl>
+    <dt>Дата</dt><dd><%= fmt.fmtDateTime(a.starts_at) %></dd>
+    <dt>Участник</dt><dd><%= a.login %></dd>
+    <dt>Контакты</dt><dd><%= a.email %>, <%= a.phone %></dd>
+    <dt>Помещение</dt><dd><%= a.room %></dd>
+    <dt>Оплата</dt><dd><%= a.payment %></dd>
+    <% if (a.review_text) { %><dt>Отзыв</dt><dd><%= a.review_rating %> из 5: <%= a.review_text %></dd><% } %>
+  </dl>
+  <form method="post" action="/admin/applications/<%= a.id %>/status" class="status-form">
     <%- include('partials/csrf') %>
     <input type="hidden" name="back" value="<%= '/admin' + (Object.keys(query).length ? '?' + new URLSearchParams(query).toString() : '') %>">
-    <select name="status">
+    <select name="status" aria-label="Статус заявки <%= a.id %>">
       <% statuses.forEach(function (s) { %><option <%= s === a.status ? 'selected' : '' %>><%= s %></option><% }) %>
     </select>
-    <button>Сохранить статус</button>
+    <button class="btn btn--small">Сохранить</button>
   </form>
-</div>
+</article>
 <% }) %>
+</div>
 <%- include('partials/foot') %>

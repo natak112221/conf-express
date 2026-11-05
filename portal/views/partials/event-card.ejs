@@ -1,0 +1,13 @@
+<a class="event-card<%= isPast(e) ? ' is-past' : '' %>" href="/events/<%= e.id %>">
+  <% if (e.photo) { %>
+  <img src="/img/events/<%= e.photo %>-m.jpg" srcset="/img/events/<%= e.photo %>-m.jpg 780w, /img/events/<%= e.photo %>.jpg 1200w" sizes="(max-width: 640px) 100vw, 360px" alt="" width="780" height="520" loading="lazy">
+  <% } %>
+  <div class="event-body">
+    <div class="stub"><b><%= fmt.day(e.starts_at) %></b><span><%= fmt.monShort(e.starts_at) %></span></div>
+    <div>
+      <h3><%= e.title %></h3>
+      <p><%= e.place %></p>
+      <% if (isPast(e)) { %><p>Мероприятие прошло</p><% } %>
+    </div>
+  </div>
+</a>

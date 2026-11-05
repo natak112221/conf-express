@@ -1,0 +1,18 @@
+<%- include('partials/head', { title: 'Личный кабинет' }) %>
+<h1>Личный кабинет</h1>
+<div class="app-card" style="max-width:520px">
+  <dl style="margin:0">
+    <dt>Логин</dt><dd><%= user.login %></dd>
+    <dt>Почта</dt><dd><%= user.email %></dd>
+    <dt>Телефон</dt><dd><%= user.phone %></dd>
+    <dt>Роль</dt><dd><%= user.role === 'admin' ? 'администратор' : 'участник' %></dd>
+    <dt>Регистрация</dt><dd><%= fmt.fmtDate(user.created_at) %></dd>
+  </dl>
+</div>
+<div class="stats">
+  <div><b><%= stats.total %></b>заявок</div>
+  <div><b><%= stats.done %></b>завершено</div>
+  <div><b><%= stats.reviews %></b>отзывов</div>
+</div>
+<p><a class="btn" href="/applications">Перейти к заявкам</a></p>
+<%- include('partials/foot') %>

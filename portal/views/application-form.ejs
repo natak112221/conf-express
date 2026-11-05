@@ -1,26 +1,28 @@
 <%- include('partials/head', { title: 'Заявка' }) %>
-<h1>Заявка на мероприятие</h1>
-<p><b><%= event.title %></b>, <%= fmt.fmtDateTime(event.starts_at) %></p>
-<% if (errors.event) { %><p class="error"><%= errors.event %></p><% } %>
-<form method="post" action="/applications" novalidate>
-  <%- include('partials/csrf') %>
-  <input type="hidden" name="event_id" value="<%= event.id %>">
-  <div class="field">
-    <label for="room">Помещение</label>
-    <select id="room" name="room" required <%- errors.room ? 'aria-invalid="true"' : '' %>>
-      <option value="">Выберите помещение</option>
-      <% rooms.forEach(function (r) { %><option <%= values.room === r ? 'selected' : '' %>><%= r %></option><% }) %>
-    </select>
-    <% if (errors.room) { %><p class="error"><%= errors.room %></p><% } %>
-  </div>
-  <div class="field">
-    <label for="payment">Способ оплаты</label>
-    <select id="payment" name="payment" required <%- errors.payment ? 'aria-invalid="true"' : '' %>>
-      <option value="">Выберите способ оплаты</option>
-      <% payments.forEach(function (p) { %><option <%= values.payment === p ? 'selected' : '' %>><%= p %></option><% }) %>
-    </select>
-    <% if (errors.payment) { %><p class="error"><%= errors.payment %></p><% } %>
-  </div>
-  <p><button>Отправить заявку</button></p>
-</form>
+<div class="form-card">
+  <h1>Заявка</h1>
+  <p class="muted"><%= event.title %>, <%= fmt.fmtDateTime(event.starts_at) %></p>
+  <% if (errors.event) { %><p class="alert" role="alert"><%= errors.event %></p><% } %>
+  <form method="post" action="/applications" novalidate>
+    <%- include('partials/csrf') %>
+    <input type="hidden" name="event_id" value="<%= event.id %>">
+    <div class="field">
+      <label for="room">Помещение</label>
+      <select id="room" name="room" required <%- errors.room ? 'aria-invalid="true"' : '' %>>
+        <option value="">Выберите помещение</option>
+        <% rooms.forEach(function (r) { %><option <%= values.room === r ? 'selected' : '' %>><%= r %></option><% }) %>
+      </select>
+      <% if (errors.room) { %><p class="error"><%= errors.room %></p><% } %>
+    </div>
+    <div class="field">
+      <label for="payment">Способ оплаты</label>
+      <select id="payment" name="payment" required <%- errors.payment ? 'aria-invalid="true"' : '' %>>
+        <option value="">Выберите способ оплаты</option>
+        <% payments.forEach(function (p) { %><option <%= values.payment === p ? 'selected' : '' %>><%= p %></option><% }) %>
+      </select>
+      <% if (errors.payment) { %><p class="error"><%= errors.payment %></p><% } %>
+    </div>
+    <button class="btn btn--block">Отправить заявку</button>
+  </form>
+</div>
 <%- include('partials/foot') %>

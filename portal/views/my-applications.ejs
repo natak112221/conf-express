@@ -3,20 +3,25 @@
 <% if (!items.length) { %>
   <p>Заявок пока нет. <a href="/">Выберите мероприятие</a>.</p>
 <% } %>
+<div class="list">
 <% items.forEach(function (a) { %>
-<div class="card">
-  <p class="status"><%= a.status %></p>
+<article class="app-card">
+  <span class="status status--<%= statusClass[a.status] %>"><%= a.status %></span>
   <h3><a href="/events/<%= a.event_id %>"><%= a.title %></a></h3>
-  <p><%= fmt.fmtDateTime(a.starts_at) %></p>
-  <p>Помещение: <%= a.room %>. Оплата: <%= a.payment %>.</p>
+  <dl>
+    <dt>Дата</dt><dd><%= fmt.fmtDateTime(a.starts_at) %></dd>
+    <dt>Помещение</dt><dd><%= a.room %></dd>
+    <dt>Оплата</dt><dd><%= a.payment %></dd>
+  </dl>
+  <div class="review">
   <% if (a.review_text) { %>
-    <p><b>Ваш отзыв (<%= a.review_rating %> из 5):</b> <%= a.review_text %></p>
+    <p><b>Ваш отзыв, <%= a.review_rating %> из 5:</b> <%= a.review_text %></p>
   <% } else if (a.can_review) { %>
     <form method="post" action="/applications/<%= a.id %>/review" novalidate>
       <%- include('partials/csrf') %>
       <div class="field">
         <label for="rating<%= a.id %>">Оценка</label>
-        <select id="rating<%= a.id %>" name="rating" required>
+        <select id="rating<%= a.id %>" name="rating" required <%- openId === a.id && errors.rating ? 'aria-invalid="true"' : '' %>>
           <option value="">Выберите</option>
           <% [5, 4, 3, 2, 1].forEach(function (n) { %><option value="<%= n %>" <%= openId === a.id && Number(values.rating) === n ? 'selected' : '' %>><%= n %></option><% }) %>
         </select>
@@ -24,16 +29,18 @@
       </div>
       <div class="field">
         <label for="text<%= a.id %>">Отзыв</label>
-        <textarea id="text<%= a.id %>" name="text" rows="3" required><%= openId === a.id ? values.text : '' %></textarea>
+        <textarea id="text<%= a.id %>" name="text" rows="3" required maxlength="1000" <%- openId === a.id && errors.text ? 'aria-invalid="true"' : '' %>><%= openId === a.id ? values.text : '' %></textarea>
         <% if (openId === a.id && errors.text) { %><p class="error"><%= errors.text %></p><% } %>
       </div>
-      <button>Отправить отзыв</button>
+      <button class="btn btn--small">Отправить отзыв</button>
     </form>
   <% } else if (a.status !== 'завершено') { %>
     <p class="hint">Отзыв можно оставить, когда заявка будет завершена.</p>
   <% } else { %>
     <p class="hint">Мероприятие ещё не прошло, отзыв появится после него.</p>
   <% } %>
-</div>
+  </div>
+</article>
 <% }) %>
+</div>
 <%- include('partials/foot') %>

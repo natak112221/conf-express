@@ -1,11 +1,22 @@
 <%- include('partials/head', { title: event.title }) %>
-<h1><%= event.title %></h1>
-<p><b>Когда:</b> <%= fmt.fmtDateTime(event.starts_at) %></p>
-<p><b>Где:</b> <%= event.place %></p>
-<p><%= event.description %></p>
-<% if (mine) { %>
-  <p>Вы подали заявку, статус: <%= mine.status %></p>
-<% } else { %>
-  <p><a href="/applications/new?event=<%= event.id %>">Подать заявку</a></p>
-<% } %>
+<article class="event-page">
+  <div>
+    <% if (event.photo) { %>
+    <img src="/img/events/<%= event.photo %>.jpg" srcset="/img/events/<%= event.photo %>-m.jpg 780w, /img/events/<%= event.photo %>.jpg 1200w" sizes="(max-width: 900px) 100vw, 640px" alt="" width="1200" height="800">
+    <% } %>
+  </div>
+  <div>
+    <h1><%= event.title %></h1>
+    <div class="chips"><span class="chip"><%= fmt.fmtDateTime(event.starts_at) %></span><span class="chip"><%= event.place %></span></div>
+    <p><%= event.description %></p>
+    <% if (past) { %>
+      <p class="note">Мероприятие прошло. Подать заявку уже нельзя<% if (mine) { %>, ваша заявка: <b><%= mine.status %></b><% } %>.</p>
+    <% } else if (mine) { %>
+      <p class="note">Вы уже подали заявку, статус: <span class="status status--<%= statusClass[mine.status] %>"><%= mine.status %></span></p>
+    <% } else { %>
+      <p><a class="btn" href="/applications/new?event=<%= event.id %>">Подать заявку</a></p>
+    <% } %>
+    <p><a href="/">Вся афиша</a></p>
+  </div>
+</article>
 <%- include('partials/foot') %>

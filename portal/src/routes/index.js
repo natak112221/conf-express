@@ -4,6 +4,7 @@ const AuthController = require('../controllers/AuthController');
 const EventController = require('../controllers/EventController');
 const ApplicationController = require('../controllers/ApplicationController');
 const AdminController = require('../controllers/AdminController');
+const CabinetController = require('../controllers/CabinetController');
 
 function buildRouter(models) {
   const r = express.Router();
@@ -11,6 +12,7 @@ function buildRouter(models) {
   const ev = new EventController(models);
   const ap = new ApplicationController(models);
   const ad = new AdminController(models);
+  const cab = new CabinetController(models);
 
   r.get('/', ev.home);
   r.get('/events/:id', ev.show);
@@ -25,6 +27,8 @@ function buildRouter(models) {
   r.get('/applications/new', requireLogin, ap.form);
   r.post('/applications', requireLogin, ap.create);
   r.post('/applications/:id/review', requireLogin, ap.review);
+
+  r.get('/cabinet', requireLogin, cab.show);
 
   r.get('/admin', requireAdmin, ad.list);
   r.post('/admin/applications/:id/status', requireAdmin, ad.setStatus);

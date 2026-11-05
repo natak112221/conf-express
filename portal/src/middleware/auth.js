@@ -4,6 +4,7 @@ function loadUser(users) {
     const id = req.session.userId;
     req.user = id ? users.findById(id) : null;
     res.locals.user = req.user;
+    res.locals.path = req.path;
     res.locals.flash = req.session.flash || null;
     delete req.session.flash;
     next();

@@ -12,4 +12,14 @@ function fmtDate(s) {
   return fmtDateTime(s).split(',')[0];
 }
 
-module.exports = { fmtDateTime, fmtDate };
+const SHORT = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+
+// '2026-11-19 10:00' -> 19 и 'ноя' для «корешка билета»
+function day(s) {
+  return Number(String(s).slice(8, 10));
+}
+function monShort(s) {
+  return SHORT[Number(String(s).slice(5, 7)) - 1];
+}
+
+module.exports = { fmtDateTime, fmtDate, day, monShort };

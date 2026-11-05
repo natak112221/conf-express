@@ -5,6 +5,8 @@ const helmet = require('helmet');
 
 const { migrate } = require('./db');
 const format = require('./lib/format');
+const { STATUS_CLASS } = require('./lib/constants');
+const { isPast } = require('./lib/rules');
 const { loadUser } = require('./middleware/auth');
 const csrf = require('./middleware/csrf');
 const SqliteStore = require('./lib/sqliteStore');
@@ -24,6 +26,8 @@ function createApp(db) {
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, '..', 'views'));
   app.locals.fmt = format;
+  app.locals.statusClass = STATUS_CLASS;
+  app.locals.isPast = isPast;
 
   app.use(express.static(path.join(__dirname, '..', 'public')));
   app.use(express.urlencoded({ extended: false }));

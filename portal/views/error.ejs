@@ -1,5 +1,7 @@
 <%- include('partials/head', { title: 'Ошибка ' + code }) %>
-<h1><%= code %></h1>
-<p><%= message %></p>
-<p><a href="/">На главную</a></p>
+<div class="error-page">
+  <p class="code"><%= code %></p>
+  <p><%= message %></p>
+  <p><a class="btn" href="/">На главную</a></p>
+</div>
 <%- include('partials/foot') %>
