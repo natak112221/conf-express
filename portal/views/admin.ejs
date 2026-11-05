@@ -1,24 +1,37 @@
 <%- include('partials/head', { title: 'Панель администратора' }) %>
 <h1>Панель администратора</h1>
-<table>
-  <tr><th>№</th><th>Участник</th><th>Мероприятие</th><th>Помещение</th><th>Оплата</th><th>Статус</th></tr>
-  <% items.forEach(function (a) { %>
-  <tr>
-    <td><%= a.id %></td>
-    <td><%= a.login %><br><%= a.email %><br><%= a.phone %></td>
-    <td><%= a.title %><br><%= fmt.fmtDate(a.starts_at) %></td>
-    <td><%= a.room %></td>
-    <td><%= a.payment %></td>
-    <td>
-      <form method="post" action="/admin/applications/<%= a.id %>/status">
-        <%- include('partials/csrf') %>
-        <select name="status">
-          <% statuses.forEach(function (s) { %><option <%= s === a.status ? 'selected' : '' %>><%= s %></option><% }) %>
-        </select>
-        <button>Сохранить</button>
-      </form>
-    </td>
-  </tr>
-  <% }) %>
-</table>
+<form method="get" action="/admin" class="filter">
+  <label>Статус
+    <select name="status">
+      <option value="">Все</option>
+      <% statuses.forEach(function (s) { %><option <%= filter.status === s ? 'selected' : '' %>><%= s %></option><% }) %>
+    </select>
+  </label>
+  <label>Мероприятие
+    <select name="event">
+      <option value="">Все</option>
+      <% events.forEach(function (e) { %><option value="<%= e.id %>" <%= filter.eventId === e.id ? 'selected' : '' %>><%= e.title %></option><% }) %>
+    </select>
+  </label>
+  <button>Показать</button> <a href="/admin">Сбросить</a>
+</form>
+<p>Найдено заявок: <b><%= items.length %></b></p>
+<% items.forEach(function (a) { %>
+<div class="card">
+  <p class="status"><%= a.status %></p>
+  <h3>Заявка №<%= a.id %>: <%= a.title %></h3>
+  <p><%= fmt.fmtDateTime(a.starts_at) %></p>
+  <p>Участник: <%= a.login %>, <%= a.email %>, <%= a.phone %></p>
+  <p>Помещение: <%= a.room %>. Оплата: <%= a.payment %>.</p>
+  <% if (a.review_text) { %><p>Отзыв (<%= a.review_rating %> из 5): <%= a.review_text %></p><% } %>
+  <form method="post" action="/admin/applications/<%= a.id %>/status">
+    <%- include('partials/csrf') %>
+    <input type="hidden" name="back" value="<%= '/admin' + (Object.keys(query).length ? '?' + new URLSearchParams(query).toString() : '') %>">
+    <select name="status">
+      <% statuses.forEach(function (s) { %><option <%= s === a.status ? 'selected' : '' %>><%= s %></option><% }) %>
+    </select>
+    <button>Сохранить статус</button>
+  </form>
+</div>
+<% }) %>
 <%- include('partials/foot') %>

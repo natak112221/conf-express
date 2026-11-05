@@ -5,3 +5,13 @@ th, td { border: 1px solid #999; padding: 4px 8px; text-align: left; }
 .errors { color: red; }
 .flash { background: #ffc; padding: 6px; }
 .item { margin-bottom: 12px; }
+.field { margin-bottom: 12px; }
+.field label { display: block; margin-bottom: 4px; }
+.field input, .field select, .field textarea { width: 280px; padding: 4px; }
+.error { color: #b00020; margin: 4px 0 0; }
+[aria-invalid="true"] { border: 2px solid #b00020; }
+.hint { color: #555; font-size: 14px; margin: 4px 0 0; }
+.card { border: 1px solid #999; padding: 8px 12px; margin-bottom: 12px; max-width: 640px; }
+.card h3 { margin: 4px 0; }
+.status { display: inline-block; border: 1px solid #999; padding: 0 6px; margin: 0; }
+.filter label { margin-right: 12px; }

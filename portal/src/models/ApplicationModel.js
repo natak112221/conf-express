@@ -29,16 +29,40 @@ class ApplicationModel {
       .all(userId);
   }
 
-  all() {
+  // filter: { status, eventId }, пустые условия пропускаются
+  all({ status, eventId } = {}) {
+    const where = [];
+    const params = [];
+    if (status) {
+      where.push('a.status = ?');
+      params.push(status);
+    }
+    if (eventId) {
+      where.push('a.event_id = ?');
+      params.push(eventId);
+    }
     return this.db
       .prepare(
         `SELECT a.*, e.title, e.starts_at, u.login, u.email, u.phone
          FROM applications a
          JOIN events e ON e.id = a.event_id
          JOIN users u ON u.id = a.user_id
+         ${where.length ? 'WHERE ' + where.join(' AND ') : ''}
          ORDER BY a.id DESC`
       )
-      .all();
+      .all(...params);
+  }
+
+  withEvent(id) {
+    return this.db
+      .prepare('SELECT a.*, e.title, e.starts_at FROM applications a JOIN events e ON e.id = a.event_id WHERE a.id = ?')
+      .get(id);
+  }
+
+  addReview(id, text, rating) {
+    this.db
+      .prepare("UPDATE applications SET review_text = ?, review_rating = ?, reviewed_at = datetime('now', 'localtime') WHERE id = ?")
+      .run(text, rating, id);
   }
 
   setStatus(id, status) {

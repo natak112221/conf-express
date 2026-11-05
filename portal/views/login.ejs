@@ -1,10 +1,10 @@
 <%- include('partials/head', { title: 'Вход' }) %>
 <h1>Вход</h1>
-<% if (error) { %><p class="errors"><%= error %></p><% } %>
+<% if (error) { %><p class="error"><%= error %></p><% } %>
 <form method="post" action="/login">
   <%- include('partials/csrf') %>
-  <p><label>Логин <input name="login" required value="<%= login %>"></label></p>
-  <p><label>Пароль <input type="password" name="password" required></label></p>
+  <div class="field"><label for="login">Логин</label><input id="login" name="login" required value="<%= login %>"></div>
+  <div class="field"><label for="password">Пароль</label><input id="password" type="password" name="password" required></div>
   <p><button>Войти</button></p>
 </form>
 <%- include('partials/foot') %>

@@ -1,4 +1,6 @@
-const { validateApplication } = require('../lib/validate');
+const { validateApplication, validateReview } = require('../lib/validate');
+const { canReview } = require('../lib/rules');
+const { ROOMS, PAYMENTS } = require('../lib/constants');
 
 class ApplicationController {
   constructor({ events, applications }) {
@@ -9,7 +11,7 @@ class ApplicationController {
   form = (req, res) => {
     const event = this.events.find(req.query.event);
     if (!event) return res.status(404).render('error', { code: 404, message: 'Мероприятие не найдено' });
-    res.render('application-form', { event, errors: {}, values: {} });
+    res.render('application-form', { event, errors: {}, values: {}, rooms: ROOMS, payments: PAYMENTS });
   };
 
   create = (req, res) => {
@@ -17,14 +19,34 @@ class ApplicationController {
     if (!event) return res.status(404).render('error', { code: 404, message: 'Мероприятие не найдено' });
     const errors = validateApplication(req.body);
     if (this.applications.findByUserAndEvent(req.user.id, event.id)) errors.event = 'Вы уже подали заявку на это мероприятие';
-    if (Object.keys(errors).length) return res.status(422).render('application-form', { event, errors, values: req.body });
+    if (Object.keys(errors).length) {
+      return res.status(422).render('application-form', { event, errors, values: req.body, rooms: ROOMS, payments: PAYMENTS });
+    }
     this.applications.create({ userId: req.user.id, eventId: event.id, room: req.body.room, payment: req.body.payment });
     req.session.flash = 'Заявка отправлена';
     res.redirect('/applications');
   };
 
   mine = (req, res) => {
-    res.render('my-applications', { items: this.applications.byUser(req.user.id) });
+    const items = this.applications.byUser(req.user.id).map((a) => ({ ...a, can_review: canReview(a) }));
+    res.render('my-applications', { items, errors: {}, values: {}, openId: null });
+  };
+
+  review = (req, res) => {
+    const app = this.applications.withEvent(req.params.id);
+    // чужие заявки не показываем: для пользователя их как будто нет
+    if (!app || app.user_id !== req.user.id) return res.status(404).render('error', { code: 404, message: 'Заявка не найдена' });
+    if (!canReview(app)) {
+      return res.status(403).render('error', { code: 403, message: 'Отзыв можно оставить только после завершения мероприятия и один раз' });
+    }
+    const { errors, values } = validateReview(req.body);
+    if (Object.keys(errors).length) {
+      const items = this.applications.byUser(req.user.id).map((a) => ({ ...a, can_review: canReview(a) }));
+      return res.status(422).render('my-applications', { items, errors, values, openId: app.id });
+    }
+    this.applications.addReview(app.id, values.text, values.rating);
+    req.session.flash = 'Спасибо за отзыв';
+    res.redirect('/applications');
   };
 }
 

@@ -44,5 +44,9 @@ addApp.run(2, 4, 'Большой зал', 'Картой онлайн', 'нова
 addApp.run(3, 2, 'Малый зал', 'Наличными на входе', 'завершено');
 addApp.run(3, 5, 'Малый зал', 'Счёт для организации', 'назначено');
 
+db.prepare("UPDATE applications SET review_text = ?, review_rating = 4, reviewed_at = '2026-10-11 09:00' WHERE id = 3").run(
+  'Хорошие доклады, понравился разбор CSV на живом примере. Хотелось бы больше времени на практику.'
+);
+
 console.log('Тестовые данные добавлены: admin / Admin2026, ivan_k и maria_s / Password123');
 db.close();

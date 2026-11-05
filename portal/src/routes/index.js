@@ -24,6 +24,7 @@ function buildRouter(models) {
   r.get('/applications', requireLogin, ap.mine);
   r.get('/applications/new', requireLogin, ap.form);
   r.post('/applications', requireLogin, ap.create);
+  r.post('/applications/:id/review', requireLogin, ap.review);
 
   r.get('/admin', requireAdmin, ad.list);
   r.post('/admin/applications/:id/status', requireAdmin, ad.setStatus);

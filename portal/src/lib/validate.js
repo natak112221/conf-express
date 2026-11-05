@@ -1,4 +1,6 @@
 // Проверка данных форм. Возвращает объект ошибок по полям (пустой, если всё верно)
+const { ROOMS, PAYMENTS } = require('./constants');
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // телефон приводим к виду +7XXXXXXXXXX
@@ -19,14 +21,24 @@ function validateRegistration(data, users) {
   if (!EMAIL_RE.test(String(data.email || '').trim())) errors.email = 'Введите почту в формате name@site.ru';
   const phone = normalizePhone(data.phone);
   if (!phone) errors.phone = 'Телефон в формате +7 900 123-45-67 или 8 900 123-45-67';
-  return { errors, values: { login, email: String(data.email || '').trim(), phone } };
+  return { errors, values: { login, email: String(data.email || '').trim(), phone: phone || String(data.phone || '').trim() } };
 }
 
 function validateApplication(data) {
   const errors = {};
-  if (!data.room || !String(data.room).trim()) errors.room = 'Укажите помещение';
-  if (!data.payment || !String(data.payment).trim()) errors.payment = 'Укажите способ оплаты';
+  if (!ROOMS.includes(data.room)) errors.room = 'Выберите помещение из списка';
+  if (!PAYMENTS.includes(data.payment)) errors.payment = 'Выберите способ оплаты из списка';
   return errors;
 }
 
-module.exports = { validateRegistration, validateApplication, normalizePhone };
+function validateReview(data) {
+  const errors = {};
+  const rating = Number(data.rating);
+  if (!Number.isInteger(rating) || rating < 1 || rating > 5) errors.rating = 'Поставьте оценку от 1 до 5';
+  const text = String(data.text || '').trim();
+  if (text.length < 5) errors.text = 'Напишите отзыв не короче 5 символов';
+  else if (text.length > 1000) errors.text = 'Отзыв не длиннее 1000 символов';
+  return { errors, values: { rating, text } };
+}
+
+module.exports = { validateRegistration, validateApplication, validateReview, normalizePhone };

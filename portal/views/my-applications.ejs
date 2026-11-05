@@ -2,19 +2,38 @@
 <h1>Мои заявки</h1>
 <% if (!items.length) { %>
   <p>Заявок пока нет. <a href="/">Выберите мероприятие</a>.</p>
-<% } else { %>
-<table>
-  <tr><th>№</th><th>Мероприятие</th><th>Дата</th><th>Помещение</th><th>Оплата</th><th>Статус</th></tr>
-  <% items.forEach(function (a) { %>
-  <tr>
-    <td><%= a.id %></td>
-    <td><a href="/events/<%= a.event_id %>"><%= a.title %></a></td>
-    <td><%= fmt.fmtDate(a.starts_at) %></td>
-    <td><%= a.room %></td>
-    <td><%= a.payment %></td>
-    <td><%= a.status %></td>
-  </tr>
-  <% }) %>
-</table>
 <% } %>
+<% items.forEach(function (a) { %>
+<div class="card">
+  <p class="status"><%= a.status %></p>
+  <h3><a href="/events/<%= a.event_id %>"><%= a.title %></a></h3>
+  <p><%= fmt.fmtDateTime(a.starts_at) %></p>
+  <p>Помещение: <%= a.room %>. Оплата: <%= a.payment %>.</p>
+  <% if (a.review_text) { %>
+    <p><b>Ваш отзыв (<%= a.review_rating %> из 5):</b> <%= a.review_text %></p>
+  <% } else if (a.can_review) { %>
+    <form method="post" action="/applications/<%= a.id %>/review" novalidate>
+      <%- include('partials/csrf') %>
+      <div class="field">
+        <label for="rating<%= a.id %>">Оценка</label>
+        <select id="rating<%= a.id %>" name="rating" required>
+          <option value="">Выберите</option>
+          <% [5, 4, 3, 2, 1].forEach(function (n) { %><option value="<%= n %>" <%= openId === a.id && Number(values.rating) === n ? 'selected' : '' %>><%= n %></option><% }) %>
+        </select>
+        <% if (openId === a.id && errors.rating) { %><p class="error"><%= errors.rating %></p><% } %>
+      </div>
+      <div class="field">
+        <label for="text<%= a.id %>">Отзыв</label>
+        <textarea id="text<%= a.id %>" name="text" rows="3" required><%= openId === a.id ? values.text : '' %></textarea>
+        <% if (openId === a.id && errors.text) { %><p class="error"><%= errors.text %></p><% } %>
+      </div>
+      <button>Отправить отзыв</button>
+    </form>
+  <% } else if (a.status !== 'завершено') { %>
+    <p class="hint">Отзыв можно оставить, когда заявка будет завершена.</p>
+  <% } else { %>
+    <p class="hint">Мероприятие ещё не прошло, отзыв появится после него.</p>
+  <% } %>
+</div>
+<% }) %>
 <%- include('partials/foot') %>
