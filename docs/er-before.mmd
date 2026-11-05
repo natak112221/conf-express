@@ -1,0 +1,33 @@
+erDiagram
+    direction LR
+    users ||--o{ applications : "подаёт"
+    events ||--o{ applications : "на мероприятие"
+    users {
+        integer id PK
+        text login UK
+        text password "хеш bcrypt"
+        text email
+        text phone
+        text role
+        text created_at
+    }
+    events {
+        integer id PK
+        text title
+        text starts_at
+        text place
+        text description
+        text photo
+    }
+    applications {
+        integer id PK
+        integer user_id FK
+        integer event_id FK
+        text room
+        text payment
+        text status "текстом"
+        text created_at
+        text review_text "отзыв в заявке"
+        integer review_rating
+        text reviewed_at
+    }
