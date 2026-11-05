@@ -13,7 +13,7 @@ test('миграция 005 переносит статусы и отзывы б�
     INSERT INTO applications (user_id, event_id, room, payment, status) VALUES (2, 1, 'Большой зал', 'Картой онлайн', 'назначено');
   `);
 
-  assert.deepStrictEqual(migrate(db), ['005_statuses_reviews.js', '007_login_nocase.sql']);
+  assert.deepStrictEqual(migrate(db), ['005_statuses_reviews.js', '006_login_nocase.sql']);
 
   const rows = db.prepare('SELECT a.id, s.name AS status FROM applications a JOIN statuses s ON s.id = a.status_id ORDER BY a.id').all();
   assert.deepStrictEqual(rows.map((r) => r.status), ['завершено', 'назначено']);
