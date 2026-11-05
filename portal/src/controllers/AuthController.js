@@ -28,7 +28,16 @@ class AuthController {
   register = (req, res, next) => {
     const { errors, values } = validateRegistration(req.body, this.users);
     if (Object.keys(errors).length) return res.status(422).render('register', { errors, values });
-    const user = this.users.create({ ...values, password: req.body.password });
+    let user;
+    try {
+      user = this.users.create({ ...values, password: req.body.password });
+    } catch (e) {
+      // логин заняли между проверкой и записью: база не даст создать дубль
+      if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+        return res.status(422).render('register', { errors: { login: 'Такой логин уже занят' }, values });
+      }
+      return next(e);
+    }
     this.startSession(req, user, (err) => {
       if (err) return next(err);
       req.session.flash = 'Вы зарегистрированы';
