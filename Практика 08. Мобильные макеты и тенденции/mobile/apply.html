@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Заявка | Конференции.РФ</title>
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-row">
+    <a class="logo" href="index.html">Конференции<b>.РФ</b></a>
+    <details class="menu">
+      <summary aria-label="Меню"><span></span></summary>
+      <nav><a href="index.html">Афиша</a><a href="my.html">Мои заявки</a><a href="login.html">Вход</a><a href="register.html">Регистрация</a></nav>
+    </details>
+  </div>
+</header>
+<main>
+  <h1>Заявка</h1>
+  <p class="muted">Дизайн-системы без боли, 19 ноября, 10:00</p>
+  <form style="margin-top:20px">
+    <div class="field"><label for="room">Помещение</label>
+      <select id="room"><option>Большой зал (до 60 человек)</option><option>Малый зал (до 20 человек)</option><option>Переговорная</option></select></div>
+    <div class="field"><label for="pay">Способ оплаты</label>
+      <select id="pay"><option>Картой онлайн</option><option>Наличными на входе</option><option>Счёт для организации</option></select>
+      <p class="hint">Счёт придёт на почту из профиля.</p></div>
+    <button class="btn" type="button">Отправить заявку</button>
+  </form>
+</main>
+<nav class="tabbar"><a href="index.html" aria-current="page">Афиша</a><a href="my.html">Заявки</a><a href="login.html">Вход</a></nav>
+</body>
+</html>

@@ -1,0 +1,88 @@
+/* Мобильная версия портала «Конференции.РФ», экран 390x844 */
+@font-face { font-family: "Onest"; src: url("../fonts/onest-cyrillic-wght-normal.woff2") format("woff2"); font-weight: 100 900; unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; font-display: swap; }
+@font-face { font-family: "Onest"; src: url("../fonts/onest-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; unicode-range: U+0000-00FF, U+2013-2014, U+2018-201D, U+2022, U+2026, U+20BD; font-display: swap; }
+@font-face { font-family: "Literata"; src: url("../fonts/literata-cyrillic-wght-normal.woff2") format("woff2"); font-weight: 200 900; unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; font-display: swap; }
+@font-face { font-family: "Literata"; src: url("../fonts/literata-latin-wght-normal.woff2") format("woff2"); font-weight: 200 900; unicode-range: U+0000-00FF, U+2013-2014, U+2018-201D, U+2022, U+2026, U+20BD; font-display: swap; }
+
+:root {
+  --ink: #22252d;
+  --paper: #f7f4f0;
+  --card: #ffffff;
+  --berry: #8f2d56;
+  --berry-dark: #741f44;
+  --berry-soft: #f3e1e8;
+  --sand: #e4d9cc;
+  --slate: #5b6170;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; padding-bottom: 76px; background: var(--paper); color: var(--ink); font: 16px/1.5 "Onest", system-ui, sans-serif; }
+img { display: block; max-width: 100%; height: auto; }
+a { color: var(--berry); }
+h1, h2, h3 { font-family: "Literata", Georgia, serif; font-weight: 600; line-height: 1.2; margin: 0; }
+h1 { font-size: 28px; }
+h2 { font-size: 22px; margin-bottom: 12px; }
+
+/* шапка с меню на <details> без скриптов */
+.top { position: sticky; top: 0; z-index: 5; background: var(--paper); border-bottom: 1px solid var(--sand); }
+.top-row { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; height: 56px; }
+.logo { font-family: "Literata", serif; font-weight: 700; font-size: 19px; color: var(--ink); text-decoration: none; }
+.logo b { color: var(--berry); }
+.menu summary { list-style: none; width: 44px; height: 44px; display: grid; place-items: center; cursor: pointer; border-radius: 6px; }
+.menu summary::-webkit-details-marker { display: none; }
+.menu summary span, .menu summary span::before, .menu summary span::after { display: block; width: 22px; height: 2px; background: var(--ink); content: ""; position: relative; }
+.menu summary span::before { position: absolute; top: -7px; }
+.menu summary span::after { position: absolute; top: 7px; }
+.menu nav { position: absolute; left: 0; right: 0; top: 56px; background: var(--card); border-bottom: 1px solid var(--sand); padding: 8px 16px 16px; }
+.menu nav a { display: flex; align-items: center; min-height: 48px; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--paper); }
+
+main { padding: 16px; }
+
+/* афиша */
+.hero { position: relative; border-radius: 6px; overflow: hidden; margin-bottom: 20px; }
+.hero img { width: 100%; height: 220px; object-fit: cover; }
+.hero div { position: absolute; inset: auto 0 0 0; padding: 40px 16px 16px; color: #fff; background: linear-gradient(transparent, rgba(34, 37, 45, 0.88)); }
+.hero p { margin: 4px 0 0; font-size: 15px; }
+
+.card { display: block; background: var(--card); border: 1px solid var(--sand); border-radius: 6px; overflow: hidden; margin-bottom: 16px; color: var(--ink); text-decoration: none; box-shadow: 0 1px 2px rgba(34, 37, 45, 0.06); transition: transform 0.15s, box-shadow 0.15s; }
+.card:active { transform: scale(0.985); box-shadow: none; }
+.card img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.card-body { display: flex; gap: 14px; padding: 14px; }
+.stub { flex: none; width: 56px; text-align: center; border-right: 2px dashed var(--sand); padding-right: 14px; }
+.stub b { display: block; font: 700 30px/1 "Literata", serif; color: var(--berry); }
+.stub span { font-size: 13px; text-transform: uppercase; color: var(--slate); letter-spacing: 0.04em; }
+.card h3 { font-size: 18px; margin-bottom: 4px; }
+.muted { color: var(--slate); font-size: 15px; margin: 0; }
+
+/* страница мероприятия */
+.cover { margin: -16px -16px 16px; }
+.cover img { width: 100%; height: 240px; object-fit: cover; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 16px; }
+.chip { background: var(--berry-soft); color: var(--berry-dark); border-radius: 999px; padding: 6px 12px; font-size: 14px; font-weight: 500; }
+
+/* кнопки и поля */
+.btn { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; border: 0; border-radius: 6px; background: var(--berry); color: #fff; font: 600 16px "Onest", sans-serif; text-decoration: none; cursor: pointer; transition: background 0.15s, transform 0.1s; }
+.btn:hover { background: var(--berry-dark); }
+.btn:active { transform: scale(0.98); }
+.field { margin-bottom: 16px; }
+.field label { display: block; font-weight: 500; margin-bottom: 6px; }
+.field input, .field select { width: 100%; min-height: 48px; padding: 0 12px; border: 1.5px solid var(--sand); border-radius: 6px; background: var(--card); color: var(--ink); font: 16px "Onest", sans-serif; }
+.field input:focus, .field select:focus { outline: 3px solid var(--berry-soft); border-color: var(--berry); }
+.hint { font-size: 14px; color: var(--slate); margin: 4px 0 0; }
+
+/* статусы */
+.status { display: inline-block; border-radius: 4px; padding: 3px 10px; font-size: 13px; font-weight: 600; }
+.status.new { background: #e9e6e1; color: #3b3f48; }
+.status.assigned { background: var(--berry-soft); color: var(--berry-dark); }
+.status.done { background: var(--ink); color: #fff; }
+.app { padding: 14px; }
+.app h3 { font-size: 17px; margin: 8px 0 4px; }
+.app dl { margin: 10px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 15px; }
+.app dt { color: var(--slate); }
+.app dd { margin: 0; }
+
+/* нижняя панель */
+.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: grid; grid-template-columns: repeat(3, 1fr); background: var(--card); border-top: 1px solid var(--sand); }
+.tabbar a { display: grid; place-items: center; min-height: 60px; font-size: 13px; font-weight: 500; color: var(--slate); text-decoration: none; }
+.tabbar a[aria-current] { color: var(--berry); font-weight: 700; box-shadow: inset 0 3px 0 var(--berry); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
