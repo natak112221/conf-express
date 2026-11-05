@@ -1,5 +1,7 @@
 const { STATUSES } = require('../lib/constants');
 
+const PAGE_SIZE = 20;
+
 class AdminController {
   constructor({ applications, events }) {
     this.applications = applications;
@@ -9,8 +11,12 @@ class AdminController {
   list = (req, res) => {
     const status = STATUSES.includes(req.query.status) ? req.query.status : '';
     const eventId = Number(req.query.event) || '';
-    const items = this.applications.all({ status, eventId });
-    res.render('admin', { items, statuses: STATUSES, events: this.events.titles(), filter: { status, eventId }, query: { ...(status && { status }), ...(eventId && { event: eventId }) } });
+    const total = this.applications.count({ status, eventId });
+    const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    const page = Math.min(Math.max(1, Number(req.query.page) || 1), pages);
+    const items = this.applications.all({ status, eventId, limit: PAGE_SIZE, offset: (page - 1) * PAGE_SIZE });
+    const query = { ...(status && { status }), ...(eventId && { event: eventId }) };
+    res.render('admin', { items, total, page, pages, statuses: STATUSES, events: this.events.titles(), filter: { status, eventId }, query });
   };
 
   setStatus = (req, res) => {

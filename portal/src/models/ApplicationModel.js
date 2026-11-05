@@ -25,10 +25,6 @@ class ApplicationModel {
     return this.db.prepare(BASE + ' WHERE a.id = ?').get(id);
   }
 
-  withEvent(id) {
-    return this.find(id);
-  }
-
   findByUserAndEvent(userId, eventId) {
     return this.db.prepare(BASE + ' WHERE a.user_id = ? AND a.event_id = ?').get(userId, eventId);
   }
@@ -37,8 +33,8 @@ class ApplicationModel {
     return this.db.prepare(BASE + ' WHERE a.user_id = ? ORDER BY a.id DESC').all(userId);
   }
 
-  // filter: { status, eventId }, пустые условия пропускаются
-  all({ status, eventId } = {}) {
+  // условия отбора: { status, eventId }, пустые пропускаются
+  where({ status, eventId }) {
     const where = [];
     const params = [];
     if (status) {
@@ -49,6 +45,20 @@ class ApplicationModel {
       where.push('a.event_id = ?');
       params.push(eventId);
     }
+    return { sql: where.length ? 'WHERE ' + where.join(' AND ') : '', params };
+  }
+
+  count(filter = {}) {
+    const { sql, params } = this.where(filter);
+    return this.db
+      .prepare(`SELECT COUNT(*) FROM applications a JOIN statuses s ON s.id = a.status_id ${sql}`)
+      .pluck()
+      .get(...params);
+  }
+
+  // limit и offset нужны для постраничного вывода
+  all({ status, eventId, limit = -1, offset = 0 } = {}) {
+    const { sql, params } = this.where({ status, eventId });
     return this.db
       .prepare(
         `SELECT a.id, a.user_id, a.event_id, a.room, a.payment, a.created_at, s.name AS status,
@@ -59,10 +69,11 @@ class ApplicationModel {
          JOIN events e ON e.id = a.event_id
          JOIN users u ON u.id = a.user_id
          LEFT JOIN reviews r ON r.application_id = a.id
-         ${where.length ? 'WHERE ' + where.join(' AND ') : ''}
-         ORDER BY a.id DESC`
+         ${sql}
+         ORDER BY a.id DESC
+         LIMIT ? OFFSET ?`
       )
-      .all(...params);
+      .all(...params, limit, offset);
   }
 
   setStatus(id, status) {

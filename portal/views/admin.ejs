@@ -18,7 +18,7 @@
   <button class="btn">Показать</button>
   <a class="btn btn--ghost" href="/admin">Сбросить</a>
 </form>
-<p>Найдено заявок: <b><%= items.length %></b></p>
+<p>Найдено заявок: <b><%= total %></b><% if (pages > 1) { %>, страница <%= page %> из <%= pages %><% } %></p>
 <div class="list admin-grid">
 <% items.forEach(function (a) { %>
 <article class="app-card">
@@ -34,7 +34,7 @@
   </dl>
   <form method="post" action="/admin/applications/<%= a.id %>/status" class="status-form">
     <%- include('partials/csrf') %>
-    <input type="hidden" name="back" value="<%= '/admin' + (Object.keys(query).length ? '?' + new URLSearchParams(query).toString() : '') %>">
+    <input type="hidden" name="back" value="<%= '/admin?' + new URLSearchParams({ ...query, page }).toString() %>">
     <select name="status" aria-label="Статус заявки <%= a.id %>">
       <% statuses.forEach(function (s) { %><option <%= s === a.status ? 'selected' : '' %>><%= s %></option><% }) %>
     </select>
@@ -43,4 +43,10 @@
 </article>
 <% }) %>
 </div>
+<% if (pages > 1) { %>
+<nav class="pager" aria-label="Страницы">
+  <% if (page > 1) { %><a class="btn btn--ghost btn--small" href="/admin?<%= new URLSearchParams({ ...query, page: page - 1 }).toString() %>">Назад</a><% } %>
+  <% if (page < pages) { %><a class="btn btn--ghost btn--small" href="/admin?<%= new URLSearchParams({ ...query, page: page + 1 }).toString() %>">Дальше</a><% } %>
+</nav>
+<% } %>
 <%- include('partials/foot') %>
